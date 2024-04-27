@@ -27,7 +27,8 @@ public class GameScreen extends BaseScreen {
 
     World world;
     Arena arena;
-    Body ball;
+    Paddle paddle;
+    Ball ball;
     Box2DDebugRenderer renderer;
 
     // hit testing for mouse joint
@@ -42,9 +43,7 @@ public class GameScreen extends BaseScreen {
         return true;
     };
 
-    static class Arena {
-        final World world;
-
+    class Arena {
         // NOTE - need 1x body per wall rather than a single 'container' body
         //   otherwise ball starts 'inside' the arena body and falls through
         final Body left;
@@ -52,9 +51,7 @@ public class GameScreen extends BaseScreen {
         final Body top;
         final Body bottom;
 
-        Arena(World world) {
-            this.world = world;
-
+        Arena() {
             var margin = 1f;
             var width  = (WORLD_WIDTH  / 2f) - margin;
             var height = (WORLD_HEIGHT / 2f) - margin;
@@ -88,6 +85,58 @@ public class GameScreen extends BaseScreen {
         }
     }
 
+    class Ball {
+        final Body body;
+
+        Ball() {
+            var bodyDef = new BodyDef();
+            bodyDef.type = BodyDef.BodyType.DynamicBody;
+            bodyDef.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f);
+
+            var circle = new CircleShape() {{ setRadius(2); }};
+            var fixtureDef = new FixtureDef();
+            fixtureDef.shape = circle;
+            fixtureDef.density = 1f;
+            fixtureDef.friction = 0.9f;
+            fixtureDef.restitution = 1f;
+
+            body = world.createBody(bodyDef);
+            body.createFixture(fixtureDef);
+
+            circle.dispose();
+        }
+    }
+
+    class Paddle {
+        final Body body;
+
+        Paddle() {
+            var def = new BodyDef();
+            def.type = BodyDef.BodyType.KinematicBody;
+            def.position.set(WORLD_WIDTH / 2f, 2);
+
+            body = world.createBody(def);
+
+            var box = new PolygonShape();
+            box.setAsBox(5, 1);
+
+            var fixtureDef = new FixtureDef();
+            fixtureDef.shape = box;
+            fixtureDef.density = 1f;
+            fixtureDef.friction = 0f;
+            fixtureDef.restitution = 1f;
+
+            body.createFixture(fixtureDef);
+
+            box.dispose();
+        }
+
+        Paddle setVelocity(float x, float y) {
+            body.setLinearVelocity(x, y);
+            return this;
+        }
+    }
+
     public GameScreen() {
         worldCamera.setToOrtho(false, WORLD_WIDTH, WORLD_HEIGHT);
         worldCamera.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
@@ -95,25 +144,9 @@ public class GameScreen extends BaseScreen {
 
         Box2D.init();
         world = new World(GRAVITY, true);
-        arena = new Arena(world);
-
-        var bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-
-        var circle = new CircleShape();
-        circle.setPosition(new Vector2(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f));
-        circle.setRadius(2);
-
-        var fixtureDef = new FixtureDef();
-        fixtureDef.shape = circle;
-        fixtureDef.density = 1f;
-        fixtureDef.friction = 0f;
-        fixtureDef.restitution = 1f;
-
-        ball = world.createBody(bodyDef);
-        ball.createFixture(fixtureDef);
-
-        circle.dispose();
+        arena = new Arena();
+        paddle = new Paddle();
+        ball = new Ball();
 
         renderer = new Box2DDebugRenderer();
         renderer.setDrawBodies(true);
@@ -163,10 +196,10 @@ public class GameScreen extends BaseScreen {
         if (arena.isArenaBody(hitBody)) {
             Gdx.app.log("Hit arena", "TODO - bounce ball");
             // ball.applyLinearImpulse(new Vector2(0, 10), ball.getWorldCenter(), true);
-        } else if (hitBody != ball) {
+        } else if (hitBody != ball.body) {
             // hit something (not ball), create a new mouse joint and attach to the hit body
             var def = new MouseJointDef();
-            def.bodyA = ball;
+            def.bodyA = ball.body;
             def.bodyB = hitBody;
             def.collideConnected = true;
             def.target.set(contact.x, contact.y);
@@ -192,6 +225,24 @@ public class GameScreen extends BaseScreen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setScreen(new TitleScreen());
         }
+
+        var paddleSpeed = 10f;
+        if      (Gdx.input.isKeyPressed(Input.Keys.A)) paddle.setVelocity(-paddleSpeed, 0);
+        else if (Gdx.input.isKeyPressed(Input.Keys.D)) paddle.setVelocity( paddleSpeed, 0);
+        else {
+            // thought that friction would take care of this
+            // but since it's a force it doesn't apply to kinematic bodies (like gravity)
+            // so we'd just have to apply it manually if we want a gradual slowdown
+            paddle.setVelocity(0, 0);
+        }
+        // manual stop if we encounter the arena bounds
+        // TODO - this doesn't work correctly since it 'locks' the paddle in place
+        //  (once it hits a wall, it stops and can't move again till one of these conditions no longer applies, which they never will because it's stopped)
+        // TODO - push up into paddle or Arena class, maybe Arena::clampBody(Body body) or similar?
+//        if (paddle.body.getPosition().x < 5
+//         || paddle.body.getPosition().x > WORLD_WIDTH - 5) {
+//            paddle.setVelocity(0, 0);
+//        }
 
         // fixed time step
         var frameTime = Math.min(dt, 0.25f);
