@@ -1,0 +1,307 @@
+
+sprites.png
+size: 4096, 256
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+ninepatch/debug
+  rotate: false
+  xy: 1083, 105
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+ninepatch/glass
+  rotate: false
+  xy: 303, 21
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-active
+  rotate: false
+  xy: 1185, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-blue
+  rotate: false
+  xy: 405, 21
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-corner-bl
+  rotate: false
+  xy: 1287, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-corner-br
+  rotate: false
+  xy: 507, 21
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-corner-tl
+  rotate: false
+  xy: 1389, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-corner-tr
+  rotate: false
+  xy: 609, 21
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-corners
+  rotate: false
+  xy: 1491, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-dark
+  rotate: false
+  xy: 711, 21
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-dim
+  rotate: false
+  xy: 1593, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-dim-down
+  rotate: false
+  xy: 813, 21
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-dim-left
+  rotate: false
+  xy: 1695, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-dim-point
+  rotate: false
+  xy: 915, 21
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-dim-right
+  rotate: false
+  xy: 1797, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-dim-up
+  rotate: false
+  xy: 1899, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-green
+  rotate: false
+  xy: 2001, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-red
+  rotate: false
+  xy: 2103, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-red-2
+  rotate: false
+  xy: 2205, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-red-3
+  rotate: false
+  xy: 2307, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-tab
+  rotate: false
+  xy: 1083, 139
+  size: 100, 112
+  orig: 100, 112
+  offset: 0, 0
+  index: -1
+ninepatch/glass-thick
+  rotate: false
+  xy: 2409, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/glass-yellow
+  rotate: false
+  xy: 2511, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/metal
+  rotate: false
+  xy: 2613, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/metal-blue
+  rotate: false
+  xy: 2715, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/metal-blue-corner
+  rotate: false
+  xy: 2817, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/metal-green
+  rotate: false
+  xy: 2919, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/metal-green-corner
+  rotate: false
+  xy: 3021, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/metal-plate
+  rotate: false
+  xy: 3531, 171
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+ninepatch/metal-red
+  rotate: false
+  xy: 3123, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/metal-red-corner
+  rotate: false
+  xy: 3225, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/metal-yellow
+  rotate: false
+  xy: 3327, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/metal-yellow-corner
+  rotate: false
+  xy: 3429, 151
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ninepatch/outline
+  rotate: false
+  xy: 1, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+ninepatch/panel
+  rotate: false
+  xy: 1017, 57
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+ninepatch/plain
+  rotate: false
+  xy: 303, 123
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+ninepatch/plain-dim
+  rotate: false
+  xy: 433, 123
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+ninepatch/plain-gradient
+  rotate: false
+  xy: 563, 123
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+ninepatch/plain-gradient-highlight-green
+  rotate: false
+  xy: 693, 123
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+ninepatch/plain-gradient-highlight-red
+  rotate: false
+  xy: 823, 123
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+ninepatch/plain-gradient-highlight-yellow
+  rotate: false
+  xy: 953, 123
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+ninepatch/shear
+  rotate: false
+  xy: 1, 11
+  size: 300, 240
+  orig: 300, 240
+  offset: 0, 0
+  index: -1
+pixel
+  rotate: false
+  xy: 303, 18
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
