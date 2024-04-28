@@ -2,6 +2,7 @@ package lando.systems.prong.screens;
 
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -62,7 +63,11 @@ public abstract class BaseScreen implements Disposable, InputProcessor {
      * Update something in the screen even when the Time.pause_for thing is being processed
      * @param delta
      */
-    public abstract void alwaysUpdate(float delta);
+    public void alwaysUpdate(float delta) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+            Config.toggleDebug();
+        }
+    }
 
     public void update(float delta) {
         windowCamera.update();

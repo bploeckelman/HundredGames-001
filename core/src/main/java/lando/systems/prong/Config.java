@@ -1,5 +1,10 @@
 package lando.systems.prong;
 
+import com.badlogic.gdx.Gdx;
+
+import static com.badlogic.gdx.Application.LOG_DEBUG;
+import static com.badlogic.gdx.Application.LOG_INFO;
+
 public class Config {
 
     public static final String window_title = "Prong - Hundred Games 001";
@@ -19,4 +24,9 @@ public class Config {
         public static final int framebuffer_height = window_height;
     }
 
+    public static void toggleDebug() {
+        Debug.general = !Debug.general;
+        Gdx.app.log("Config", "Debug mode: " + (Debug.general ? "ON" : "OFF"));
+        Gdx.app.setLogLevel(Debug.general ? LOG_DEBUG : LOG_INFO);
+    }
 }

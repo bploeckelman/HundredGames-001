@@ -4,26 +4,25 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Box2D;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.QueryCallback;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 import com.badlogic.gdx.utils.ScreenUtils;
+import lando.systems.prong.Constants;
+import lando.systems.prong.entities.Arena;
+import lando.systems.prong.entities.Ball;
+import lando.systems.prong.entities.Paddle;
+import net.dermetfan.gdx.physics.box2d.Box2DUtils;
 
 public class GameScreen extends BaseScreen {
 
     boolean drawUI = true;
     float accum = 0f;
-
-    // NOTE - box2d operates on a 'meter' scale, so 1 unit = 1 meter
-    //  biggest difference from 'normal': world is *not* measured in pixels
-    static final int WORLD_WIDTH = 80;
-    static final int WORLD_HEIGHT = 48;
-
-    static final Vector2 GRAVITY = new Vector2(0, -10);
-    static final float TIME_STEP = 1/60f;
-    static final int VELOCITY_ITERATIONS = 6;
-    static final int POSITION_ITERATIONS = 2;
 
     World world;
     Arena arena;
@@ -31,122 +30,28 @@ public class GameScreen extends BaseScreen {
     Ball ball;
     Box2DDebugRenderer renderer;
 
-    // hit testing for mouse joint
+    // hit testing
     Body hitBody;
     Vector3 contact = new Vector3();
     QueryCallback callback = (fixture) -> {
         if (fixture.testPoint(contact.x, contact.y)) {
             hitBody = fixture.getBody();
-            Gdx.app.log("Fixture hit", fixture.toString());
+            Gdx.app.debug("Fixture hit", fixture.toString());
             return false;
         }
         return true;
     };
 
-    class Arena {
-        // NOTE - need 1x body per wall rather than a single 'container' body
-        //   otherwise ball starts 'inside' the arena body and falls through
-        final Body left;
-        final Body right;
-        final Body top;
-        final Body bottom;
-
-        Arena() {
-            var margin = 1f;
-            var width  = (WORLD_WIDTH  / 2f) - margin;
-            var height = (WORLD_HEIGHT / 2f) - margin;
-
-            var def = new BodyDef();
-            def.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f);
-
-            left = world.createBody(def);
-            right = world.createBody(def);
-            top = world.createBody(def);
-            bottom = world.createBody(def);
-
-            var edgeL = new EdgeShape() {{ set(new Vector2(-width, -height), new Vector2(-width,  height)); }};
-            var edgeR = new EdgeShape() {{ set(new Vector2( width, -height), new Vector2( width,  height)); }};
-            var edgeT = new EdgeShape() {{ set(new Vector2(-width,  height), new Vector2( width,  height)); }};
-            var edgeB = new EdgeShape() {{ set(new Vector2(-width, -height), new Vector2( width, -height)); }};
-
-            left.createFixture(edgeL, 0);
-            right.createFixture(edgeR, 0);
-            top.createFixture(edgeT, 0);
-            bottom.createFixture(edgeB, 0);
-
-            edgeL.dispose();
-            edgeR.dispose();
-            edgeT.dispose();
-            edgeB.dispose();
-        }
-
-        public boolean isArenaBody(Body body) {
-            return body == left || body == right || body == top || body == bottom;
-        }
-    }
-
-    class Ball {
-        final Body body;
-
-        Ball() {
-            var bodyDef = new BodyDef();
-            bodyDef.type = BodyDef.BodyType.DynamicBody;
-            bodyDef.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f);
-
-            var circle = new CircleShape() {{ setRadius(2); }};
-            var fixtureDef = new FixtureDef();
-            fixtureDef.shape = circle;
-            fixtureDef.density = 1f;
-            fixtureDef.friction = 0.9f;
-            fixtureDef.restitution = 1f;
-
-            body = world.createBody(bodyDef);
-            body.createFixture(fixtureDef);
-
-            circle.dispose();
-        }
-    }
-
-    class Paddle {
-        final Body body;
-
-        Paddle() {
-            var def = new BodyDef();
-            def.type = BodyDef.BodyType.KinematicBody;
-            def.position.set(WORLD_WIDTH / 2f, 2);
-
-            body = world.createBody(def);
-
-            var box = new PolygonShape();
-            box.setAsBox(5, 1);
-
-            var fixtureDef = new FixtureDef();
-            fixtureDef.shape = box;
-            fixtureDef.density = 1f;
-            fixtureDef.friction = 0f;
-            fixtureDef.restitution = 1f;
-
-            body.createFixture(fixtureDef);
-
-            box.dispose();
-        }
-
-        Paddle setVelocity(float x, float y) {
-            body.setLinearVelocity(x, y);
-            return this;
-        }
-    }
-
     public GameScreen() {
-        worldCamera.setToOrtho(false, WORLD_WIDTH, WORLD_HEIGHT);
-        worldCamera.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
+        worldCamera.setToOrtho(false, Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT);
+        worldCamera.position.set(Constants.WORLD_WIDTH / 2f, Constants.WORLD_HEIGHT / 2f, 0);
         worldCamera.update();
 
         Box2D.init();
-        world = new World(GRAVITY, true);
-        arena = new Arena();
-        paddle = new Paddle();
-        ball = new Ball();
+        world = new World(Constants.GRAVITY, true);
+        arena = new Arena(world);
+        paddle = new Paddle(world, arena);
+        ball = new Ball(world);
 
         renderer = new Box2DDebugRenderer();
         renderer.setDrawBodies(true);
@@ -166,22 +71,22 @@ public class GameScreen extends BaseScreen {
     @Override
     public void initializeUI() {
         super.initializeUI();
-        //uiStage.addActor(titleScreenUI);
+        //uiStage.addActor(ui);
     }
 
     @Override
     public boolean touchDown(int x, int y, int pointer, int button) {
         contact.set(x, y, 0);
         worldCamera.unproject(contact);
-        Gdx.app.log("Touch down", contact.toString());
+        Gdx.app.debug("Touch down", contact.toString());
 
         hitBody = null;
 
-        // NOTE - not sure why the example has the 0.0001 epsilon here
-        var epsilon = 0.0001f;
         world.QueryAABB(callback,
-            contact.x - epsilon, contact.y - epsilon,
-            contact.x + epsilon, contact.y + epsilon);
+            contact.x - Box2DUtils.Settings.epsilon,
+            contact.y - Box2DUtils.Settings.epsilon,
+            contact.x + Box2DUtils.Settings.epsilon,
+            contact.y + Box2DUtils.Settings.epsilon);
 
         if (hitBody == null) {
             return false;
@@ -193,7 +98,7 @@ public class GameScreen extends BaseScreen {
         }
 
         // hit the arena, just report it for now
-        if (arena.isArenaBody(hitBody)) {
+        if (arena.hasBody(hitBody)) {
             Gdx.app.log("Hit arena", "TODO - bounce ball");
             // ball.applyLinearImpulse(new Vector2(0, 10), ball.getWorldCenter(), true);
         } else if (hitBody != ball.body) {
@@ -218,39 +123,31 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void alwaysUpdate(float delta) {
+        super.alwaysUpdate(delta);
     }
 
     @Override
-    public void update(float dt) {
+    public void update(float delta) {
+        super.update(delta);
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setScreen(new TitleScreen());
         }
 
-        var paddleSpeed = 10f;
-        if      (Gdx.input.isKeyPressed(Input.Keys.A)) paddle.setVelocity(-paddleSpeed, 0);
-        else if (Gdx.input.isKeyPressed(Input.Keys.D)) paddle.setVelocity( paddleSpeed, 0);
-        else {
-            // thought that friction would take care of this
-            // but since it's a force it doesn't apply to kinematic bodies (like gravity)
-            // so we'd just have to apply it manually if we want a gradual slowdown
-            paddle.setVelocity(0, 0);
-        }
-        // manual stop if we encounter the arena bounds
-        // TODO - this doesn't work correctly since it 'locks' the paddle in place
-        //  (once it hits a wall, it stops and can't move again till one of these conditions no longer applies, which they never will because it's stopped)
-        // TODO - push up into paddle or Arena class, maybe Arena::clampBody(Body body) or similar?
-//        if (paddle.body.getPosition().x < 5
-//         || paddle.body.getPosition().x > WORLD_WIDTH - 5) {
-//            paddle.setVelocity(0, 0);
-//        }
-
         // fixed time step
-        var frameTime = Math.min(dt, 0.25f);
+        var frameTime = Math.min(delta, 0.25f);
         accum += frameTime;
-        while (accum >= TIME_STEP) {
-            world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
-            accum -= TIME_STEP;
+        while (accum >= Constants.TIME_STEP) {
+            world.step(
+                Constants.TIME_STEP,
+                Constants.VELOCITY_ITERATIONS,
+                Constants.POSITION_ITERATIONS);
+            accum -= Constants.TIME_STEP;
         }
+
+        // NOTE - update physics bodies after world step to avoid
+        //   visible jitter from manually repositioning bodies
+        paddle.update(delta);
 
         uiStage.act();
     }

@@ -7,8 +7,11 @@ import aurelienribon.tweenengine.primitives.MutableFloat;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -24,16 +27,18 @@ import lando.systems.prong.screens.BaseScreen;
 import lando.systems.prong.screens.LaunchScreen;
 import lando.systems.prong.screens.TitleScreen;
 import lando.systems.prong.utils.Time;
-import lando.systems.prong.utils.accessors.*;
+import lando.systems.prong.utils.accessors.CameraAccessor;
+import lando.systems.prong.utils.accessors.ColorAccessor;
+import lando.systems.prong.utils.accessors.RectangleAccessor;
+import lando.systems.prong.utils.accessors.Vector2Accessor;
+import lando.systems.prong.utils.accessors.Vector3Accessor;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
 
     public static Main game;
 
     public Assets assets;
     public TweenManager tween;
-//    public AudioManager audioManager;
 
     public FrameBuffer frameBuffer;
     public TextureRegion frameBufferRegion;
@@ -108,9 +113,6 @@ public class Main extends ApplicationAdapter {
     }
 
     public void update(float delta) {
-        // handle top level input
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) Config.Debug.general = !Config.Debug.general;
-
         // update things that must update every tick
         Time.update();
         tween.update(Time.delta);
@@ -132,7 +134,6 @@ public class Main extends ApplicationAdapter {
         // update systems
         currentScreen.update(delta);
     }
-
 
     @Override
     public void render() {

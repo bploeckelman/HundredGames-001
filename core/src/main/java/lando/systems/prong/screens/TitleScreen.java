@@ -1,6 +1,7 @@
 package lando.systems.prong.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -25,6 +26,9 @@ public class TitleScreen extends BaseScreen {
 
     @Override
     public void update(float dt) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            Gdx.app.exit();
+        }
         if (Gdx.input.justTouched()) {
             game.setScreen(new GameScreen());
         }
