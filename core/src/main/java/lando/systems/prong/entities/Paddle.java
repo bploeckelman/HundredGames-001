@@ -5,15 +5,18 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import lando.systems.prong.Constants;
+import lando.systems.prong.utils.Box2dBodyEditorLoader;
 import text.formic.Stringf;
 
 public class Paddle {
 
     final Arena arena;
-    float friction = 0.9f;
+    final float density = 1f;
+    final float friction = 0.8f;
+    final float restitution = 1f;
+
     float speed = 30f;
 
     public final Body body;
@@ -23,22 +26,16 @@ public class Paddle {
 
         var def = new BodyDef();
         def.type = BodyDef.BodyType.KinematicBody;
-        def.position.set(Constants.WORLD_WIDTH / 2f, 2);
-
+        def.position.set(Constants.WORLD_WIDTH / 2f, 1);
         body = world.createBody(def);
 
-        var box = new PolygonShape();
-        box.setAsBox(5, 1);
-
         var fixtureDef = new FixtureDef();
-        fixtureDef.shape = box;
-        fixtureDef.density = 1f;
-        fixtureDef.friction = 0.9f;
-        fixtureDef.restitution = 1f;
+        fixtureDef.density = density;
+        fixtureDef.friction = friction;
+        fixtureDef.restitution = restitution;
 
-        body.createFixture(fixtureDef);
-
-        box.dispose();
+        var loader = new Box2dBodyEditorLoader(Gdx.files.internal("physics/prong.b2d"));
+        loader.attachFixture(body, "paddle", fixtureDef, 1f);
     }
 
     public void setVelocity(float x, float y) {

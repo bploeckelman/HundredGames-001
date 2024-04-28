@@ -40,14 +40,17 @@ public class TitleScreen extends BaseScreen {
 
     @Override
     public void render(SpriteBatch batch) {
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        ScreenUtils.clear(0.25f, 0.25f, 0.3f, 1f);
         batch.setProjectionMatrix(worldCamera.combined);
         batch.begin();
         {
             batch.setColor(Color.WHITE);
+            float scale = 1;
+            float w = scale * assets.gdx.getWidth();
+            float h = scale * assets.gdx.getHeight();
             float width = worldCamera.viewportWidth;
             float height = worldCamera.viewportHeight;
-            batch.draw(assets.gdx, 0, 0, width, height);
+            batch.draw(assets.gdx, (width - w) / 2, (height - h) / 2, w, h);
         }
         batch.end();
 

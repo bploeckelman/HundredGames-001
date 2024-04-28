@@ -9,6 +9,8 @@ import lando.systems.prong.Constants;
 
 public class Ball {
 
+    final float radius = 1f;
+
     public final Body body;
 
     public Ball(World world) {
@@ -18,13 +20,13 @@ public class Ball {
             Constants.WORLD_WIDTH / 2f,
             Constants.WORLD_HEIGHT / 2f);
 
-        var circle = new CircleShape() {{ setRadius(2); }};
+        var circle = new CircleShape() {{ setRadius(radius); }};
 
         var fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
         fixtureDef.density = 1f;
-        fixtureDef.friction = 0.9f;
-        fixtureDef.restitution = 1f;
+        fixtureDef.friction = 0.5f;
+        fixtureDef.restitution = 0.9f;
 
         body = world.createBody(bodyDef);
         body.createFixture(fixtureDef);
