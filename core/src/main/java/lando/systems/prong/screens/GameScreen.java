@@ -12,11 +12,13 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import lando.systems.prong.Constants;
 import lando.systems.prong.entities.Arena;
 import lando.systems.prong.entities.Ball;
 import lando.systems.prong.entities.Paddle;
+import lando.systems.prong.utils.Callback;
 import net.dermetfan.gdx.physics.box2d.Box2DUtils;
 
 public class GameScreen extends BaseScreen {
@@ -29,6 +31,9 @@ public class GameScreen extends BaseScreen {
     Paddle paddle;
     Ball ball;
     Box2DDebugRenderer renderer;
+
+    // contact resolution queue
+    public final Array<Callback> contactCallbacks = new Array<>();
 
     // hit testing
     Body hitBody;
@@ -50,8 +55,10 @@ public class GameScreen extends BaseScreen {
         Box2D.init();
         world = new World(Constants.GRAVITY, true);
         arena = new Arena(world);
-        paddle = new Paddle(world, arena);
+        paddle = new Paddle(this, world, arena);
         ball = new Ball(world);
+
+        world.setContactListener(new Paddle.BallProngContactListener(world, paddle));
 
         renderer = new Box2DDebugRenderer();
         renderer.setDrawBodies(true);
@@ -144,6 +151,11 @@ public class GameScreen extends BaseScreen {
                 Constants.POSITION_ITERATIONS);
             accum -= Constants.TIME_STEP;
         }
+
+        for (var callback : contactCallbacks) {
+            callback.run();
+        }
+        contactCallbacks.clear();
 
         // NOTE - update physics bodies after world step to avoid
         //   visible jitter from manually repositioning bodies

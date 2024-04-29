@@ -27,9 +27,11 @@ public class Ball {
         fixtureDef.density = 1f;
         fixtureDef.friction = 0.5f;
         fixtureDef.restitution = 0.9f;
+        fixtureDef.filter.categoryBits = Constants.CAT_BALL;
+        fixtureDef.filter.maskBits = Constants.CAT_ARENA | Constants.CAT_PADDLE | Constants.CAT_PRONG;
 
         body = world.createBody(bodyDef);
-        body.createFixture(fixtureDef);
+        body.createFixture(fixtureDef).setUserData("ball");
 
         circle.dispose();
     }

@@ -15,4 +15,10 @@ public class Constants {
     public static final float TIME_STEP = 1/60f;
     public static final int VELOCITY_ITERATIONS = 6;
     public static final int POSITION_ITERATIONS = 2;
+
+    // collision filter categories
+    public static final short CAT_ARENA  = 0x0001;
+    public static final short CAT_PADDLE = 0x0002;
+    public static final short CAT_PRONG  = 0x0004;
+    public static final short CAT_BALL   = 0x0008;
 }

@@ -74,7 +74,7 @@ public class Box2dBodyEditorLoader {
 	 * @param fd The fixture parameters to apply to the created body fixture.
 	 * @param scale The desired scale of the body. The default width is 1.
 	 */
-	public void attachFixture(Body body, String name, FixtureDef fd, float scale) {
+	public void attachFixture(Body body, String name, FixtureDef fd, float scale, boolean nameAsUserData) {
 		RigidBodyModel rbModel = model.rigidBodies.get(name);
 		if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
 
@@ -91,7 +91,10 @@ public class Box2dBodyEditorLoader {
 
 			polygonShape.set(vertices);
 			fd.shape = polygonShape;
-			body.createFixture(fd);
+			var fixture = body.createFixture(fd);
+            if (nameAsUserData) {
+                fixture.setUserData(name);
+            }
 
 			for (int ii=0, nn=vertices.length; ii<nn; ii++) {
 				free(vertices[ii]);
