@@ -47,11 +47,13 @@ public class Paddle {
         fixtureDef.filter.maskBits = Constants.CAT_BALL;
 
         var loader = new Box2dBodyEditorLoader(Gdx.files.internal("physics/prong.b2d"));
-        loader.attachFixture(body, "paddle", fixtureDef, 1f, true);
+        loader.attachFixture(body, "paddle", fixtureDef, 1f,
+                UserData.builder(this).name("paddle").build());
 
-        var sensorShapeLeft   = new CircleShape() {{ setPosition(new Vector2(-7, 4)); setRadius(1); }};
-        var sensorShapeCenter = new CircleShape() {{ setPosition(new Vector2( 0, 6)); setRadius(1); }};
-        var sensorShapeRight  = new CircleShape() {{ setPosition(new Vector2( 7, 4)); setRadius(1); }};
+        var sensorRadius = 0.25f;
+        var sensorShapeLeft   = new CircleShape() {{ setPosition(new Vector2(-7, 4)); setRadius(sensorRadius); }};
+        var sensorShapeCenter = new CircleShape() {{ setPosition(new Vector2( 0, 6)); setRadius(sensorRadius); }};
+        var sensorShapeRight  = new CircleShape() {{ setPosition(new Vector2( 7, 4)); setRadius(sensorRadius); }};
 
         var sensorDef = new FixtureDef();
         sensorDef.isSensor = true;
@@ -59,11 +61,16 @@ public class Paddle {
         sensorDef.filter.maskBits = Constants.CAT_BALL;
 
         sensorDef.shape = sensorShapeLeft;
-        body.createFixture(sensorDef).setUserData("sensor-left");
+        var sensorLeft = body.createFixture(sensorDef);
+        sensorLeft.setUserData(UserData.builder(this).name("sensor-left").build());
+
         sensorDef.shape = sensorShapeCenter;
-        body.createFixture(sensorDef).setUserData("sensor-center");
+        var sensorCenter = body.createFixture(sensorDef);
+        sensorCenter.setUserData(UserData.builder(this).name("sensor-center").build());
+
         sensorDef.shape = sensorShapeRight;
-        body.createFixture(sensorDef).setUserData("sensor-right");
+        var sensorRight = body.createFixture(sensorDef);
+        sensorRight.setUserData(UserData.builder(this).name("sensor-right").build());
 
         sensorShapeLeft.dispose();
         sensorShapeCenter.dispose();
@@ -119,22 +126,20 @@ public class Paddle {
             var onlyOneSensor = sensorA ^ sensorB;
             if (!onlyOneSensor) return;
 
-            // TODO - make a uniform data type for user data
-            var sensorName = (String) (sensorA ? fixtureA.getUserData() : fixtureB.getUserData());
+            var userDataA = (UserData) fixtureA.getUserData();
+            var userDataB = (UserData) fixtureB.getUserData();
 
-            var ballA = fixtureA.getUserData().equals("ball");
-            var ballB = fixtureB.getUserData().equals("ball");
-            if (!ballA && !ballB) return;
-            Gdx.app.log("Paddle", sensorName + " hit by ball, welding them together");
+            var sensor = (sensorA ? userDataA : userDataB);
+            var ball = (UserData) null;
+            if      (userDataA.object instanceof Ball) ball = userDataA;
+            else if (userDataB.object instanceof Ball) ball = userDataB;
+            if (ball == null) return;
 
-            var ball = ballA ? fixtureA : fixtureB;
-            var sensor = ballA ? fixtureB : fixtureA;
-
+            Gdx.app.log("Paddle", sensor.name + " hit by " + ball.name + ", welding them together");
+            var ballBody = ((Ball) ball.object).body;
+            var sensorBody = ((Paddle) sensor.object).body;
             var jointDef = new WeldJointDef();
-            jointDef.initialize(
-                ball.getBody(),
-                sensor.getBody(),
-                sensor.getBody().getPosition());
+            jointDef.initialize(ballBody, sensorBody, sensorBody.getPosition());
 
             paddle.screen.contactCallbacks.add((params) -> {
                 ballWeldJoint = (WeldJoint) world.createJoint(jointDef);

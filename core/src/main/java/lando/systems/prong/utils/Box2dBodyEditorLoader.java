@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import lando.systems.prong.entities.UserData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +51,10 @@ public class Box2dBodyEditorLoader {
 	// Public API
 	// -------------------------------------------------------------------------
 
+    public void attachFixture(Body body, String name, FixtureDef fd, float scale, UserData userData) {
+        attachFixture(body, name, fd, scale, false, userData);
+    }
+
 	/**
 	 * Creates and applies the fixtures defined in the editor. The name
 	 * parameter is used to retrieve the right fixture from the loaded file.
@@ -74,7 +79,7 @@ public class Box2dBodyEditorLoader {
 	 * @param fd The fixture parameters to apply to the created body fixture.
 	 * @param scale The desired scale of the body. The default width is 1.
 	 */
-	public void attachFixture(Body body, String name, FixtureDef fd, float scale, boolean nameAsUserData) {
+	public void attachFixture(Body body, String name, FixtureDef fd, float scale, boolean nameAsUserData, UserData userData) {
 		RigidBodyModel rbModel = model.rigidBodies.get(name);
 		if (rbModel == null) throw new RuntimeException("Name '" + name + "' was not found.");
 
@@ -92,9 +97,7 @@ public class Box2dBodyEditorLoader {
 			polygonShape.set(vertices);
 			fd.shape = polygonShape;
 			var fixture = body.createFixture(fd);
-            if (nameAsUserData) {
-                fixture.setUserData(name);
-            }
+            fixture.setUserData(nameAsUserData ? name : userData);
 
 			for (int ii=0, nn=vertices.length; ii<nn; ii++) {
 				free(vertices[ii]);

@@ -31,7 +31,8 @@ public class Ball {
         fixtureDef.filter.maskBits = Constants.CAT_ARENA | Constants.CAT_PADDLE | Constants.CAT_PRONG;
 
         body = world.createBody(bodyDef);
-        body.createFixture(fixtureDef).setUserData("ball");
+        var fixture = body.createFixture(fixtureDef);
+        fixture.setUserData(UserData.builder(this).name("ball").build());
 
         circle.dispose();
     }

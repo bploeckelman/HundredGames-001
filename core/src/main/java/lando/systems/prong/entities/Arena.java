@@ -47,10 +47,14 @@ public class Arena {
         var edgeT = new EdgeShape() {{ set(new Vector2(bounds.x, bounds.y + bounds.height), new Vector2( bounds.x + bounds.width, bounds.y + bounds.height)); }};
         var edgeB = new EdgeShape() {{ set(new Vector2(bounds.x, bounds.y), new Vector2(bounds.x + bounds.width, bounds.y)); }};
 
-        left.createFixture(edgeL, 0).setUserData("arena-left");
-        right.createFixture(edgeR, 0).setUserData("arena-right");
-        top.createFixture(edgeT, 0).setUserData("arena-top");
-        bottom.createFixture(edgeB, 0).setUserData("arena-bottom");
+        var fixtureLeft = left.createFixture(edgeL, 0);
+        fixtureLeft.setUserData(UserData.builder(this).name("arena-left").build());
+        var fixtureRight = right.createFixture(edgeR, 0);
+        fixtureRight.setUserData(UserData.builder(this).name("arena-right").build());
+        var fixtureTop = top.createFixture(edgeT, 0);
+        fixtureTop.setUserData(UserData.builder(this).name("arena-top").build());
+        var fixtureBottom = bottom.createFixture(edgeB, 0);
+        fixtureBottom.setUserData(UserData.builder(this).name("arena-bottom").build());
 
         edgeL.dispose();
         edgeR.dispose();
